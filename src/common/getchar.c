@@ -1,7 +1,6 @@
 #include "gch.h"
-#include "print.h" // Подключаем, чтобы клавиатура знала про функцию pch
+#include "print.h" 
 
-// Таблица перевода скан-кодов в ASCII (US Layout)
 static const char kbd_us_layout[128] = {
     0,  27, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '\b',
   '\t', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n',
@@ -10,23 +9,23 @@ static const char kbd_us_layout[128] = {
     0,  ' ',   0
 };
 
-// Функция чтения байта из порта клавиатуры (из entry.asm)
+
 extern unsigned char inb(unsigned short port);
 
 void handle_keyboard_interrupt() {
-    // 1. Считываем скан-код нажатой кнопки из порта 0x60
+    
     unsigned char scancode = inb(0x60);
 
-    // 2. Если 7-й бит равен 0 (код меньше 0x80) — это НАЖАТИЕ клавиши
+    
     if (scancode < 0x80) {
-        // 3. Превращаем скан-код в ASCII-символ по нашей таблице
         char ascii_char = kbd_us_layout[scancode];
         
-        // 4. Если этот символ есть в таблице (не равен 0) — выводим на экран!
+        
         if (ascii_char != 0) {
-            pch(ascii_char); // Вызываем твою функцию! Она напечатает букву и сдвинет курсор.
+            pch(ascii_char); 
         }
     }
     
-    // Отпускание клавиш (код > 0x80) пока просто игнорируем
+   
+
 }
