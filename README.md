@@ -39,5 +39,5 @@ make
 ### Running in Emulator
 To launch **chomOS** inside QEMU emulator:
 ```bash
-qemu-system-i386 -drive format=raw,file=os_image.img
+make run
 ```
