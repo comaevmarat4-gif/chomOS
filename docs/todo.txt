@@ -1,0 +1,25 @@
+## 🗺️ chomOS Roadmap & TODO
+
+Here is the plan for future development of **chomOS**. The main goal is to transition from a basic kernel to a functional operating system with a file system and multitasking.
+
+### Phase 1: Memory Management (Prerequisite)
+* [ ] Implement a **Physical Memory Manager (PMM)** (Bitset/Bitmap allocator) to track free and used RAM pages.
+* [ ] Implement a **Virtual Memory Manager (VMM)** (Paging) to give every process its own isolated memory space.
+* [ ] Create a basic Kernel Heap (`malloc` and `free` functions for the kernel).
+
+### Phase 2: Multitasking & Threading (Многопоточность)
+* [ ] Implement **Hardware Interrupt-based Context Switching** using the PIT (Programmable Interval Timer).
+* [ ] Create a `process` structure (PCB - Process Control Block) to store CPU registers state.
+* [ ] Implement a simple **Round-Robin Scheduler** to switch between multiple threads/processes.
+
+### Phase 3: File System (Файловая система)
+* [ ] Write a basic **IDE/ATA Hard Drive Driver** using PIO mode to read and write sectors on the disk.
+* [ ] Implement a simple file system layout:
+  * *Option A:* **TarFS** (read-only, easiest to start with) to load initial files.
+  * *Option B:* Custom **FAT12/FAT16** or a custom flat file system for reading and writing.
+* [ ] Implement a Virtual File System (VFS) layer with abstract functions like `open()`, `read()`, and `write()`.
+
+### Phase 4: Executable Loading (Запуск файлов)
+* [ ] Create a parser for a simple binary executable format (Flat Binary or basic **ELF** parsing).
+* [ ] Implement a **Syscall Interface** (via software interrupts like `int 0x80`) so user programs can request services from the kernel (e.g., printing to screen).
+* [ ] Load a separate binary file from the file system into memory, switch CPU to User Mode (Ring 3), and execute it.
