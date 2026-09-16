@@ -1,6 +1,6 @@
 #include "print.h"
 
-// Объявляем, что cons_putc находится в другом файле (screen.c)
+
 extern void cons_putc(char c);
 
 void pch(int c) {
