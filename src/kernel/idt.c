@@ -6,7 +6,7 @@ struct idt_ptr_struct idt_ptr;
 extern void idt_load();
 extern void keyboard_asm_handler();
 extern void default_interrupt_handler();
-extern void pic_remap(); // Теперь она полностью ассемблерная!
+extern void pic_remap();
 
 void idt_set_gate(unsigned char num, unsigned int base, unsigned short sel, unsigned char flags) {
     idt[num].base_lo = base & 0xFFFF;
