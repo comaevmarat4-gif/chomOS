@@ -3,10 +3,8 @@ global _start
 extern kmain
 
 _start:
-    ; === Шаг 1: Загружаем временный щит прерываний (Микро-IDT) ===
     lidt [temp_idt_ptr]
 
-    ; === Шаг 2: Железный ремап портов PIC ===
     mov al, 0x11
     out 0x20, al
     out 0xA0, al
@@ -25,12 +23,10 @@ _start:
     out 0x21, al
     out 0xA1, al
 
-    ; Полностью открываем маски, теперь у нас есть щит!
     mov al, 0x00    
     out 0x21, al
     out 0xA1, al
 
-    ; === Шаг 3: Вызываем Си-ядро ===
     call kmain
     
     sti
@@ -42,7 +38,7 @@ global idt_load
 extern idt_ptr
 
 idt_load:
-    lidt [idt_ptr]  ; Эта функция перезапишет наш щит на твою полноценную Си-таблицу!
+    lidt [idt_ptr]
     ret
 
 global keyboard_asm_handler
@@ -61,9 +57,9 @@ global default_interrupt_handler
 default_interrupt_handler:
     push eax
     mov al, 0x20
-    out 0x20, al   ; Говорим PIC, что прерывание обработано
+    out 0x20, al
     pop eax
-    iretd          ; Безопасно возвращаем процессор к коду Си!
+    iretd
 
 global inb
 inb:
@@ -79,24 +75,17 @@ outb:
     out dx, al
     ret
 
-; =====================================================================
-; === ВРЕМЕННЫЙ ЩИТ ПРЕРЫВАНИЙ ДЛЯ ЗАЩИТЫ КЕРНЕЛА ОТ ВЫЛЕТОВ BIOS ===
-; =====================================================================
 align 4
 temp_idt_ptr:
-    dw (33 * 8) - 1                                     ; Размер таблицы на 33 прерывания
-    dd temp_idt                                         ; Адрес таблицы
+    dw (33 * 8) - 1
+    dd temp_idt
 
 align 8
 temp_idt:
-    ; Заполняем первые 32 дескриптора прерываний нулями
     times 32 dq 0 
     
-    ; 32-й дескриптор (вектор 0x20 — наш системный таймер)
-    ; NASM заполнит эти поля правильно, если мы просто укажем метку, 
-    ; а линкер сам расставит старшие и младшие байты!
-    dw default_interrupt_handler                        ; Младшие 16 бит адреса (NASM сам обрежет до word)
-    dw 0x08                                             ; Селектор кода ядра
+    dw default_interrupt_handler
+    dw 0x08
     db 0
-    db 0x8E                                             ; Флаги прерывания ядра
-    dw 0x0000                                           ; Старшие 16 бит адреса (пока ставим 0, для таймера на старте этого хватит, чтобы не упасть)
+    db 0x8E
+    dw 0x0000
